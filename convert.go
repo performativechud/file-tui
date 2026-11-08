@@ -41,12 +41,12 @@ func srcBase(p string) string {
 
 func planSingle(src, ext string) string {
 	dir := filepath.Dir(src)
-	out := filepath.Join(dir, "file-cli-"+srcBase(src)+"."+ext)
+	out := filepath.Join(dir, "file-tui-"+srcBase(src)+"."+ext)
 	if _, err := os.Stat(out); os.IsNotExist(err) {
 		return out
 	}
 	for i := 2; ; i++ {
-		cand := filepath.Join(dir, fmt.Sprintf("file-cli-%s-%d.%s", srcBase(src), i, ext))
+		cand := filepath.Join(dir, fmt.Sprintf("file-tui-%s-%d.%s", srcBase(src), i, ext))
 		if _, err := os.Stat(cand); os.IsNotExist(err) {
 			return cand
 		}
@@ -56,7 +56,7 @@ func planSingle(src, ext string) string {
 // planMultiBase returns the pdftoppm base. Output files are <base>-<page>.<ext>.
 func planMultiBase(src, ext string) string {
 	dir := filepath.Dir(src)
-	base := filepath.Join(dir, "file-cli-"+srcBase(src))
+	base := filepath.Join(dir, "file-tui-"+srcBase(src))
 	used := func(b string) bool {
 		m, _ := filepath.Glob(b + "-*." + ext)
 		return len(m) > 0
@@ -294,7 +294,7 @@ func convertPandocPDF(ctx context.Context, src, out string) error {
 			return runCmd(ctx, "pandoc", []string{src, "-o", out}, nil)
 		}
 	}
-	f, err := os.CreateTemp(filepath.Dir(out), ".file-cli-*.html")
+	f, err := os.CreateTemp(filepath.Dir(out), ".file-tui-*.html")
 	if err != nil {
 		return err
 	}
@@ -308,7 +308,7 @@ func convertPandocPDF(ctx context.Context, src, out string) error {
 }
 
 func convertLibreOffice(ctx context.Context, src string, t Target, out string) error {
-	tmp, err := os.MkdirTemp("", "file-cli-lo-")
+	tmp, err := os.MkdirTemp("", "file-tui-lo-")
 	if err != nil {
 		return err
 	}

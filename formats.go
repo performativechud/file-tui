@@ -317,9 +317,9 @@ func toolName(t Target) string {
 	case "ffvideo", "ffaudio", "ffframe", "ffsub":
 		return "ffmpeg"
 	case "archive":
-		return "file-cli"
+		return "file-tui"
 	case "data":
-		return "file-cli"
+		return "file-tui"
 	case "libreoffice":
 		return "LibreOffice"
 	case "pandoc":

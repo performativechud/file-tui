@@ -1,10 +1,10 @@
 # Maintainer: performativechud <performativechud@users.noreply.github.com>
-pkgname=file-cli
+pkgname=file-tui
 pkgver=0.1.0
 pkgrel=1
 pkgdesc="Convert a dropped or pasted file to another format from the terminal"
 arch=('x86_64' 'aarch64')
-url="https://github.com/performativechud/file-cli"
+url="https://github.com/performativechud/file-tui"
 license=('MIT')
 depends=('glibc')
 makedepends=('go')

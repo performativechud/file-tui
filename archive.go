@@ -62,7 +62,7 @@ func (b *extractBudget) add(n int64) error {
 // shortcut: archives are staged on disk, not streamed entry to entry.
 // Upgrade when someone converts multi-gigabyte archives.
 func convertArchive(ctx context.Context, src string, k Kind, t Target, out string, emit func(Progress)) error {
-	tmp, err := os.MkdirTemp("", "file-cli-arc-")
+	tmp, err := os.MkdirTemp("", "file-tui-arc-")
 	if err != nil {
 		return err
 	}

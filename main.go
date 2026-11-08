@@ -6,7 +6,7 @@ import (
 
 	// Imported before bubbletea so its init runs first and pins the terminal
 	// background before bubbletea's init queries the terminal.
-	_ "file-cli/internal/boot"
+	_ "file-tui/internal/boot"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -24,12 +24,12 @@ func main() {
 		if !stopFlags && len(a) > 0 && a[0] == '-' {
 			switch a {
 			case "-h", "--help":
-				fmt.Println("file-cli — convert a dropped or passed file")
+				fmt.Println("file-tui — convert a dropped or passed file")
 				fmt.Println()
-				fmt.Println("usage: file-cli [file]")
+				fmt.Println("usage: file-tui [file]")
 				return
 			case "-v", "--version":
-				fmt.Println("file-cli " + version)
+				fmt.Println("file-tui " + version)
 				return
 			default:
 				fmt.Fprintf(os.Stderr, "unknown flag: %s\n", a)
@@ -47,7 +47,7 @@ func main() {
 	p := tea.NewProgram(m, tea.WithAltScreen(), tea.WithMouseCellMotion())
 	m.send = p.Send
 	if _, err := p.Run(); err != nil {
-		fmt.Fprintln(os.Stderr, "file-cli:", err)
+		fmt.Fprintln(os.Stderr, "file-tui:", err)
 		os.Exit(1)
 	}
 }

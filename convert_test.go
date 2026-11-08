@@ -38,7 +38,7 @@ func TestConvertImageIntegration(t *testing.T) {
 	if err != nil || fi.Size() == 0 {
 		t.Fatalf("no output: %v", err)
 	}
-	if filepath.Base(res.Out) != "file-cli-cat.webp" {
+	if filepath.Base(res.Out) != "file-tui-cat.webp" {
 		t.Fatalf("name: %s", res.Out)
 	}
 }
@@ -135,7 +135,7 @@ func TestDataCSVToJSONToCSV(t *testing.T) {
 	csvPath := filepath.Join(dir, "t.csv")
 	os.WriteFile(csvPath, []byte("a,b\n1,2\n3,4\n"), 0o644)
 
-	jsonPath := filepath.Join(dir, "file-cli-t.json")
+	jsonPath := filepath.Join(dir, "file-tui-t.json")
 	if err := convertData(csvPath, Target{Ext: "json"}, jsonPath); err != nil {
 		t.Fatal(err)
 	}
@@ -147,7 +147,7 @@ func TestDataCSVToJSONToCSV(t *testing.T) {
 		t.Fatalf("json body: %s", b)
 	}
 
-	backPath := filepath.Join(dir, "file-cli-t.tsv")
+	backPath := filepath.Join(dir, "file-tui-t.tsv")
 	if err := convertData(jsonPath, Target{Ext: "tsv"}, backPath); err != nil {
 		t.Fatal(err)
 	}
@@ -220,7 +220,7 @@ func TestConvertCalibreEpubToTxt(t *testing.T) {
 	}
 	dir := t.TempDir()
 	src := makeDocx(t, dir)
-	epub := filepath.Join(dir, "file-cli-note.epub")
+	epub := filepath.Join(dir, "file-tui-note.epub")
 	if _, err := convert(context.Background(), src, kindOf("docx"),
 		Target{Ext: "epub", Engine: "pandoc"}, epub, "", nil); err != nil {
 		t.Fatal(err)

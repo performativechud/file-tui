@@ -159,7 +159,7 @@ func TestDoneViewRendersResult(t *testing.T) {
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
 	m.st = stDone
-	m.res = Result{Out: filepath.Join(dir, "file-cli-cat.jpg"), Size: 1234, Elapsed: 250 * time.Millisecond}
+	m.res = Result{Out: filepath.Join(dir, "file-tui-cat.jpg"), Size: 1234, Elapsed: 250 * time.Millisecond}
 	v := m.View()
 	if !strings.Contains(v, "✓  converted") {
 		t.Fatalf("done view missing success marker:\n%s", v)
@@ -489,15 +489,15 @@ func TestAutocompleteEmptyInput(t *testing.T) {
 // TestAutocompleteHomeExpansion verifies ~ expands to home directory.
 func TestAutocompleteHomeExpansion(t *testing.T) {
 	home := t.TempDir()
-	os.MkdirAll(filepath.Join(home, ".file-cli-test-ac"), 0o755)
+	os.MkdirAll(filepath.Join(home, ".file-tui-test-ac"), 0o755)
 
 	orig := homeDirFunc
 	homeDirFunc = func() (string, error) { return home, nil }
 	defer func() { homeDirFunc = orig }()
 
-	suggs := autocomplete("~/.file-cli-test-ac")
+	suggs := autocomplete("~/.file-tui-test-ac")
 	if len(suggs) == 0 {
-		t.Fatal("expected suggestions for ~/.file-cli-test-ac")
+		t.Fatal("expected suggestions for ~/.file-tui-test-ac")
 	}
 }
 

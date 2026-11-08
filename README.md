@@ -1,4 +1,4 @@
-# file-cli
+# file-tui
 
 Convert a dropped or pasted file to another format from the terminal.
 
@@ -9,16 +9,16 @@ an existing file (collisions get `-2`, `-3`, …).
 ## Build
 
 ```bash
-go build -o file-cli .
+go build -o file-tui .
 ```
 
 ## Run
 
 ```bash
-./file-cli              # empty UI, paste a path
-./file-cli <file>       # open with file loaded
-./file-cli -- <file>    # end-of-options marker
-./file-cli --version    # print version
+./file-tui              # empty UI, paste a path
+./file-tui <file>       # open with file loaded
+./file-tui -- <file>    # end-of-options marker
+./file-tui --version    # print version
 ```
 
 ## Platforms
@@ -41,8 +41,8 @@ go build -o file-cli .
 
 ## Output
 
-Written beside the source as `file-cli-<name>.<ext>`. Multi-page PDF output is
-`file-cli-<name>-1.png`, `-2.png`, …
+Written beside the source as `file-tui-<name>.<ext>`. Multi-page PDF output is
+`file-tui-<name>-1.png`, `-2.png`, …
 
 ## Dependencies
 

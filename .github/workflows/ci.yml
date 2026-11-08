@@ -29,7 +29,7 @@ jobs:
       - name: Race test
         run: go test -race -count=1 ./...
       - name: Build
-        run: go build -o file-cli .
+        run: go build -o file-tui .
 
 
   test-windows:
@@ -45,7 +45,7 @@ jobs:
       - name: Test
         run: go test -count=1 ./...
       - name: Build
-        run: go build -o file-cli.exe .
+        run: go build -o file-tui.exe .
 
   build-matrix:
     runs-on: ubuntu-latest
@@ -63,4 +63,4 @@ jobs:
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-        run: go build -o file-cli-${{ matrix.goos }}-${{ matrix.goarch }} .
+        run: go build -o file-tui-${{ matrix.goos }}-${{ matrix.goarch }} .

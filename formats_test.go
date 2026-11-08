@@ -136,22 +136,22 @@ func TestNaming(t *testing.T) {
 	os.WriteFile(src, []byte("x"), 0o644)
 
 	out := planSingle(src, "png")
-	if filepath.Base(out) != "file-cli-cat.png" {
+	if filepath.Base(out) != "file-tui-cat.png" {
 		t.Fatalf("output name: %s", out)
 	}
 	os.WriteFile(out, []byte("x"), 0o644)
 	out2 := planSingle(src, "png")
-	if filepath.Base(out2) != "file-cli-cat-2.png" {
+	if filepath.Base(out2) != "file-tui-cat-2.png" {
 		t.Fatalf("collision name: %s", out2)
 	}
 
 	base := planMultiBase(src, "png")
-	if filepath.Base(base) != "file-cli-cat" {
+	if filepath.Base(base) != "file-tui-cat" {
 		t.Fatalf("multi base: %s", base)
 	}
 	os.WriteFile(base+"-1.png", []byte("x"), 0o644)
 	base2 := planMultiBase(src, "png")
-	if filepath.Base(base2) != "file-cli-cat-2" {
+	if filepath.Base(base2) != "file-tui-cat-2" {
 		t.Fatalf("multi collision base: %s", base2)
 	}
 }

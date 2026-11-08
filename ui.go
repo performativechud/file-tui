@@ -566,7 +566,7 @@ func (m *model) contentWidth() int {
 }
 
 func (m *model) header(w int) string {
-	left := styleAccent.Render("file-cli") + styleDim.Render("  ·  ") + styleMuted.Render("local converter")
+	left := styleAccent.Render("file-tui") + styleDim.Render("  ·  ") + styleMuted.Render("local converter")
 	right := styleMuted.Render(m.stateLabel())
 	gap := w - lipgloss.Width(left) - lipgloss.Width(right)
 	if gap < 1 {

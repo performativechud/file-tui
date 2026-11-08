@@ -1,10 +1,10 @@
-# file-cli Architecture
+# file-tui Architecture
 
-Generated from GitNexus knowledge graph analysis of `/home/arham/file-cli`.
+Generated from GitNexus knowledge graph analysis of `/home/arham/file-tui`.
 
 ## Overview
 
-`file-cli` is a Go (1.24) terminal user interface built with [bubbletea](https://github.com/charmbracelet/bubbletea) v1.3.10 and [lipgloss](https://github.com/charmbracelet/lipgloss) v1.1.0. It converts a dropped, pasted, or argument-passed file to a chosen format through a menu-driven TUI. The application detects file type via magic bytes, probes installed conversion tools at startup, and offers only logically valid targets.
+`file-tui` is a Go (1.24) terminal user interface built with [bubbletea](https://github.com/charmbracelet/bubbletea) v1.3.10 and [lipgloss](https://github.com/charmbracelet/lipgloss) v1.1.0. It converts a dropped, pasted, or argument-passed file to a chosen format through a menu-driven TUI. The application detects file type via magic bytes, probes installed conversion tools at startup, and offers only logically valid targets.
 
 **Stats (from GitNexus index):**
 - Files: 16 Go source files
