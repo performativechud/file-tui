@@ -59,9 +59,6 @@ func autocomplete(raw string) []suggestion {
 			continue
 		}
 		isDir := e.IsDir()
-		if !isDir {
-			continue
-		}
 		displayName := name
 		if isDir {
 			displayName += "/"

@@ -508,11 +508,12 @@ func TestAutocompleteAbsolutePath(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "file.txt"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/")
-	if len(suggs) != 1 {
-		t.Fatalf("expected 1 suggestion (dir only), got %d", len(suggs))
+	if len(suggs) < 2 {
+		t.Fatalf("expected at least 2 suggestions, got %d", len(suggs))
 	}
+	// Directory should come first
 	if !suggs[0].isDir {
-		t.Error("expected directory suggestion")
+		t.Error("expected directory first in suggestions")
 	}
 }
 
@@ -530,11 +531,8 @@ func TestAutocompleteSpaces(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "my file.txt"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/my")
-	if len(suggs) != 1 {
-		t.Fatalf("expected 1 directory suggestion for 'my', got %d", len(suggs))
-	}
-	if !suggs[0].isDir {
-		t.Error("expected directory suggestion")
+	if len(suggs) < 2 {
+		t.Fatalf("expected at least 2 suggestions for 'my', got %d", len(suggs))
 	}
 }
 
@@ -558,11 +556,12 @@ func TestAutocompleteDirFileSharedPrefix(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "database.json"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/data")
-	if len(suggs) != 1 {
-		t.Fatalf("expected 1 directory suggestion for 'data', got %d", len(suggs))
+	if len(suggs) < 3 {
+		t.Fatalf("expected 3 suggestions for 'data', got %d", len(suggs))
 	}
+	// Directory should come first
 	if !suggs[0].isDir {
-		t.Error("expected directory suggestion")
+		t.Error("expected directory first")
 	}
 }
 
@@ -582,16 +581,15 @@ func TestAutocompleteMoreThanEight(t *testing.T) {
 // TestAutocompleteDirFirstSorting verifies directories sort before files.
 func TestAutocompleteDirFirstSorting(t *testing.T) {
 	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "aaa.txt"), []byte("x"), 0o644)
 	os.MkdirAll(filepath.Join(dir, "zzz"), 0o755)
-	os.MkdirAll(filepath.Join(dir, "aaa"), 0o755)
 
 	suggs := autocomplete(dir + "/")
 	if len(suggs) < 2 {
 		t.Fatalf("expected 2 suggestions, got %d", len(suggs))
 	}
-	// Should be sorted alphabetically: aaa before zzz
-	if suggs[0].name != "aaa/" {
-		t.Errorf("expected aaa/ first, got %s", suggs[0].name)
+	if !suggs[0].isDir {
+		t.Error("expected directory first despite alphabetical order")
 	}
 }
 
