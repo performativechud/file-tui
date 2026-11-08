@@ -31,9 +31,9 @@
 ## Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/1.png" width="32%">
-  <img src="docs/screenshots/2.png" width="32%">
-  <img src="docs/screenshots/3.png" width="32%">
+  <img src="docs/screenshots/1.png" width="100%"><br>
+  <img src="docs/screenshots/2.png" width="48%">
+  <img src="docs/screenshots/3.png" width="48%">
 </p>
 
 ## Install
