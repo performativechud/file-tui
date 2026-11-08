@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -115,6 +116,9 @@ func TestWriteStreamCreatesPartialFileOnOverflow(t *testing.T) {
 
 // TestWriteStreamRespectsMode verifies file mode is applied on success.
 func TestWriteStreamRespectsMode(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("unix file modes not supported on windows")
+	}
 	b := newExtractBudget()
 	dir := t.TempDir()
 	dst := filepath.Join(dir, "mode.txt")
@@ -133,6 +137,9 @@ func TestWriteStreamRespectsMode(t *testing.T) {
 
 // TestWriteStreamNoSUID verifies mode strips special bits (SUID/SGID/sticky).
 func TestWriteStreamNoSUID(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("unix file modes not supported on windows")
+	}
 	b := newExtractBudget()
 	dir := t.TempDir()
 	dst := filepath.Join(dir, "suid.txt")

@@ -65,6 +65,10 @@ func normalizePath(s string) string {
 				return ""
 			}
 			s = u.Path
+			// Windows drive letters: file:///C:/path yields /C:/path.
+			if len(s) >= 3 && s[0] == '/' && ((s[1] >= 'A' && s[1] <= 'Z') || (s[1] >= 'a' && s[1] <= 'z')) && s[2] == ':' {
+				s = s[1:]
+			}
 		}
 	}
 	s = unescapeShell(s)

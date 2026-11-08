@@ -25,7 +25,7 @@ func TestReadyViewHidesLockedAndShowsOutput(t *testing.T) {
 	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
-	m.width, m.height = 100, 32
+	m.width, m.height = 200, 32
 	v := m.View()
 	if !strings.Contains(v, "convert to") {
 		t.Fatalf("missing convert section:\n%s", v)
