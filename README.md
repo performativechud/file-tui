@@ -18,7 +18,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 - **Magic-byte detection** — identifies files by content, not extension.
 - **Smart targets** — only logically valid conversions are offered.
@@ -28,7 +28,7 @@
 - **Archive safety** — byte and entry caps on extraction.
 - **Cancellation** — `Esc` / `Ctrl+C` kills the whole process tree.
 
-## 📸 Screenshots
+## Screenshots
 
 <p align="center">
   <img src="docs/screenshots/1.png" width="32%">
@@ -36,7 +36,7 @@
   <img src="docs/screenshots/3.png" width="32%">
 </p>
 
-## 🚀 Install
+## Install
 
 ```bash
 # Go
@@ -54,7 +54,7 @@ yay -S file-tui
 cd packaging/aur && makepkg -si
 ```
 
-## 🎮 Usage
+## Usage
 
 ```bash
 file-tui                # empty UI, paste a path
@@ -78,13 +78,13 @@ file-tui --version      # print version
 Written beside the source as `file-tui-<name>.<ext>`. Multi-page PDF output is
 `file-tui-<name>-1.png`, `-2.png`, …
 
-## 🔧 Dependencies
+## Dependencies
 
 Detected at runtime — the more you have, the more targets unlock:
 
 ImageMagick · ffmpeg · poppler · pandoc · LibreOffice · calibre · tesseract · 7-Zip
 
-## 🛡 Archive extraction limits
+## Archive extraction limits
 
 ZIP, TAR, and compressed single-file archives (gz, bz2, xz, zst) are checked
 during extraction: total bytes (default 2 GiB) and entry count (default 200k).
@@ -95,7 +95,7 @@ Override with `FILE_TUI_MAX_EXTRACT_MB` and `FILE_TUI_MAX_EXTRACT_ENTRIES`
 completes, the directory is verified against the same limits. This is a
 **post-extraction** check — only convert 7z/RAR archives from trusted sources.
 
-## ⚠️ Limitations
+## Limitations
 
 - 7z/RAR relies on external tools; post-extraction verification does not prevent
   resource consumption during extraction.
@@ -105,12 +105,12 @@ completes, the directory is verified against the same limits. This is a
 - Requires Go 1.24 to build.
 - Runtime dependencies must be installed separately.
 
-## 🪟 Windows
+## Windows
 
 Supported via cross-compilation. Process cancellation uses `taskkill`. Some
 optional conversion utilities must be installed separately.
 
-## 🐧 Platforms
+## Platforms
 
 - **Linux (amd64, arm64):** Compiled and runtime-tested.
 - **macOS (amd64, arm64):** Compiled. Runtime not yet verified.
