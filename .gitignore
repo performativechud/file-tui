@@ -1,0 +1,6 @@
+# Compiled binary
+file-cli
+file-cli.exe
+
+# GitNexus index cache
+.gitnexus/
