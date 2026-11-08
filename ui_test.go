@@ -573,8 +573,8 @@ func TestAutocompleteMoreThanEight(t *testing.T) {
 	}
 
 	suggs := autocomplete(dir + "/")
-	if len(suggs) > 8 {
-		t.Fatalf("expected max 8 suggestions, got %d", len(suggs))
+	if len(suggs) != 12 {
+		t.Fatalf("expected all 12 suggestions, got %d", len(suggs))
 	}
 }
 

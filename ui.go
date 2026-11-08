@@ -463,7 +463,24 @@ func (m *model) View() string {
 		lines = append(lines, "", m.emptyZone(w), "", m.inputLine(w))
 		if len(m.suggestions) > 0 {
 			lines = append(lines, "")
-			for i, s := range m.suggestions {
+			// Window the suggestion list so it never exceeds terminal height.
+			visible := m.height - len(lines) - 4
+			if visible < 3 {
+				visible = 3
+			}
+			if visible > len(m.suggestions) {
+				visible = len(m.suggestions)
+			}
+			start := 0
+			if m.selSugg >= visible {
+				start = m.selSugg - visible + 1
+			}
+			end := start + visible
+			if end > len(m.suggestions) {
+				end = len(m.suggestions)
+			}
+			for i := start; i < end; i++ {
+				s := m.suggestions[i]
 				mark := "  "
 				if i == m.selSugg {
 					mark = "▸ "
@@ -473,6 +490,9 @@ func (m *model) View() string {
 					style = styleAccent
 				}
 				lines = append(lines, style.Render(mark+s.name))
+			}
+			if len(m.suggestions) > visible {
+				lines = append(lines, styleMuted.Render(fmt.Sprintf("  %d of %d", m.selSugg+1, len(m.suggestions))))
 			}
 		}
 	case stDone:

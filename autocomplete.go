@@ -83,9 +83,6 @@ func autocomplete(raw string) []suggestion {
 		return strings.ToLower(matches[i].name) < strings.ToLower(matches[j].name)
 	})
 
-	if len(matches) > 8 {
-		matches = matches[:8]
-	}
 	return matches
 }
 
