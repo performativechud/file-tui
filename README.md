@@ -25,8 +25,9 @@ go build -o file-cli .
 
 - **Linux (amd64, arm64):** Compiled and runtime-tested.
 - **macOS (amd64, arm64):** Compiled successfully. Runtime not yet verified.
-- **Windows:** Not supported. The conversion engine uses Unix process-group
-  signaling (`syscall.Setpgid`, `syscall.Kill`) which is unavailable on Windows.
+- **Windows (amd64):** Supported via cross-compilation. Process cancellation uses
+  `taskkill` to terminate the converter process tree. Some optional conversion
+  utilities must be installed separately.
 
 ## Keys
 
@@ -59,6 +60,19 @@ built-in extraction budget. After extraction completes, the extracted directory
 is verified against the same byte and entry limits. This is a **post-extraction**
 check: resource consumption during extraction is not prevented. Only convert 7z
 and RAR archives from trusted sources.
+
+## Arch Linux (AUR)
+
+A PKGBUILD is provided under `packaging/aur/`. To build locally:
+
+```bash
+cd packaging/aur
+makepkg -si
+```
+
+To submit to the AUR, create an AUR package repository and push the PKGBUILD
+following the AUR submission guidelines. No SSH credentials are stored in this
+repository.
 
 ## Limitations
 
