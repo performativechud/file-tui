@@ -70,3 +70,8 @@ and RAR archives from trusted sources.
 - Requires Go 1.24 to build.
 - Runtime dependencies (ImageMagick, ffmpeg, etc.) must be installed
   separately. Missing tools produce clear error messages.
+## Windows
+
+Windows is supported via cross-compilation. Process cancellation uses `taskkill`
+to terminate the converter's process tree. Some optional conversion utilities
+may need to be installed separately.

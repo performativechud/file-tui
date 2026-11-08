@@ -13,7 +13,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 )
 
@@ -384,13 +383,7 @@ func lastLine(s string) string {
 // group on cancel so ffmpeg's children die too.
 func runCmd(ctx context.Context, name string, args []string, onLine func(string)) error {
 	cmd := exec.CommandContext(ctx, name, args...)
-	cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
-	cmd.Cancel = func() error {
-		if cmd.Process == nil {
-			return nil
-		}
-		return syscall.Kill(-cmd.Process.Pid, syscall.SIGKILL)
-	}
+	configureCmd(cmd)
 	var errBuf tailBuffer
 	cmd.Stderr = &errBuf
 	stdout, err := cmd.StdoutPipe()
