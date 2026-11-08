@@ -9,6 +9,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
+// homeDirFunc is the home-directory resolver; tests may override it for determinism.
+var homeDirFunc = os.UserHomeDir
+
 // suggestion is a single autocomplete entry.
 type suggestion struct {
 	name  string // display name (with trailing / for dirs)
@@ -31,7 +34,7 @@ func autocomplete(raw string) []suggestion {
 	// Expand ~ for filesystem lookup.
 	lookupDir := dir
 	if dir == "~" || strings.HasPrefix(dir, "~/") {
-		if home, err := os.UserHomeDir(); err == nil {
+		if home, err := homeDirFunc(); err == nil {
 			if dir == "~" {
 				lookupDir = home
 			} else {
@@ -56,6 +59,9 @@ func autocomplete(raw string) []suggestion {
 			continue
 		}
 		isDir := e.IsDir()
+		if !isDir {
+			continue
+		}
 		displayName := name
 		if isDir {
 			displayName += "/"
@@ -70,9 +76,6 @@ func autocomplete(raw string) []suggestion {
 			path:  completedPath,
 			isDir: isDir,
 		})
-		if len(matches) >= 8 {
-			break
-		}
 	}
 
 	sort.Slice(matches, func(i, j int) bool {
@@ -83,6 +86,9 @@ func autocomplete(raw string) []suggestion {
 		return strings.ToLower(matches[i].name) < strings.ToLower(matches[j].name)
 	})
 
+	if len(matches) > 8 {
+		matches = matches[:8]
+	}
 	return matches
 }
 

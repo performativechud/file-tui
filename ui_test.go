@@ -447,6 +447,14 @@ func lineText(lines []string, y int) string {
 
 // TestAutocompleteBasic verifies autocomplete returns matching directories.
 func TestAutocompleteBasic(t *testing.T) {
+	home := t.TempDir()
+	os.MkdirAll(filepath.Join(home, "Documents"), 0o755)
+	os.MkdirAll(filepath.Join(home, "Downloads"), 0o755)
+
+	orig := homeDirFunc
+	homeDirFunc = func() (string, error) { return home, nil }
+	defer func() { homeDirFunc = orig }()
+
 	suggs := autocomplete("~/Do")
 	if len(suggs) == 0 {
 		t.Fatal("expected suggestions for ~/Do")
@@ -480,14 +488,12 @@ func TestAutocompleteEmptyInput(t *testing.T) {
 
 // TestAutocompleteHomeExpansion verifies ~ expands to home directory.
 func TestAutocompleteHomeExpansion(t *testing.T) {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		t.Skip("no home dir")
-	}
-	// Create a temp dir in home for testing
-	tmpDir := filepath.Join(home, ".file-cli-test-ac")
-	os.MkdirAll(tmpDir, 0o755)
-	defer os.RemoveAll(tmpDir)
+	home := t.TempDir()
+	os.MkdirAll(filepath.Join(home, ".file-cli-test-ac"), 0o755)
+
+	orig := homeDirFunc
+	homeDirFunc = func() (string, error) { return home, nil }
+	defer func() { homeDirFunc = orig }()
 
 	suggs := autocomplete("~/.file-cli-test-ac")
 	if len(suggs) == 0 {
@@ -502,12 +508,11 @@ func TestAutocompleteAbsolutePath(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "file.txt"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/")
-	if len(suggs) < 2 {
-		t.Fatalf("expected at least 2 suggestions, got %d", len(suggs))
+	if len(suggs) != 1 {
+		t.Fatalf("expected 1 suggestion (dir only), got %d", len(suggs))
 	}
-	// Directory should come first
 	if !suggs[0].isDir {
-		t.Error("expected directory first in suggestions")
+		t.Error("expected directory suggestion")
 	}
 }
 
@@ -525,8 +530,11 @@ func TestAutocompleteSpaces(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "my file.txt"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/my")
-	if len(suggs) < 2 {
-		t.Fatalf("expected at least 2 suggestions for 'my', got %d", len(suggs))
+	if len(suggs) != 1 {
+		t.Fatalf("expected 1 directory suggestion for 'my', got %d", len(suggs))
+	}
+	if !suggs[0].isDir {
+		t.Error("expected directory suggestion")
 	}
 }
 
@@ -550,12 +558,11 @@ func TestAutocompleteDirFileSharedPrefix(t *testing.T) {
 	os.WriteFile(filepath.Join(dir, "database.json"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/data")
-	if len(suggs) < 3 {
-		t.Fatalf("expected 3 suggestions for 'data', got %d", len(suggs))
+	if len(suggs) != 1 {
+		t.Fatalf("expected 1 directory suggestion for 'data', got %d", len(suggs))
 	}
-	// Directory should come first
 	if !suggs[0].isDir {
-		t.Error("expected directory first")
+		t.Error("expected directory suggestion")
 	}
 }
 
@@ -575,15 +582,16 @@ func TestAutocompleteMoreThanEight(t *testing.T) {
 // TestAutocompleteDirFirstSorting verifies directories sort before files.
 func TestAutocompleteDirFirstSorting(t *testing.T) {
 	dir := t.TempDir()
-	os.WriteFile(filepath.Join(dir, "aaa.txt"), []byte("x"), 0o644)
 	os.MkdirAll(filepath.Join(dir, "zzz"), 0o755)
+	os.MkdirAll(filepath.Join(dir, "aaa"), 0o755)
 
 	suggs := autocomplete(dir + "/")
 	if len(suggs) < 2 {
 		t.Fatalf("expected 2 suggestions, got %d", len(suggs))
 	}
-	if !suggs[0].isDir {
-		t.Error("expected directory first despite alphabetical order")
+	// Should be sorted alphabetically: aaa before zzz
+	if suggs[0].name != "aaa/" {
+		t.Errorf("expected aaa/ first, got %s", suggs[0].name)
 	}
 }
 
