@@ -60,12 +60,17 @@ func normalizePath(s string) string {
 	s = strings.TrimSpace(s)
 	s = strings.Trim(s, `"'`)
 	if strings.HasPrefix(strings.ToLower(s), "file://") {
-		if u, err := url.Parse(s); err == nil {
+		rest := s[len("file://"):]
+		// Windows drive-letter or UNC paths are not valid URIs; handle directly.
+		if len(rest) >= 2 && ((rest[0] >= 'A' && rest[0] <= 'Z') || (rest[0] >= 'a' && rest[0] <= 'z')) && rest[1] == ':' {
+			s = rest
+		} else if strings.HasPrefix(rest, "/") && len(rest) >= 3 && ((rest[1] >= 'A' && rest[1] <= 'Z') || (rest[1] >= 'a' && rest[1] <= 'z')) && rest[2] == ':' {
+			s = rest[1:]
+		} else if u, err := url.Parse(s); err == nil {
 			if u.Host != "" {
 				return ""
 			}
 			s = u.Path
-			// Windows drive letters: file:///C:/path yields /C:/path.
 			if len(s) >= 3 && s[0] == '/' && ((s[1] >= 'A' && s[1] <= 'Z') || (s[1] >= 'a' && s[1] <= 'z')) && s[2] == ':' {
 				s = s[1:]
 			}

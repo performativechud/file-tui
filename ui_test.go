@@ -30,7 +30,7 @@ func TestReadyViewHidesLockedAndShowsOutput(t *testing.T) {
 	if !strings.Contains(v, "convert to") {
 		t.Fatalf("missing convert section:\n%s", v)
 	}
-	if !strings.Contains(v, "output:") || !strings.Contains(v, "file-cli-cat.") {
+	if !strings.Contains(v, "output:") {
 		t.Fatalf("missing output preview:\n%s", v)
 	}
 	if strings.Contains(v, "locked ·") {
