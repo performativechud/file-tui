@@ -74,6 +74,12 @@ To submit to the AUR, create an AUR package repository and push the PKGBUILD
 following the AUR submission guidelines. No SSH credentials are stored in this
 repository.
 
+## Screenshots
+
+![Empty state](docs/screenshots/1.png)
+![File loaded](docs/screenshots/2.png)
+![Conversion](docs/screenshots/3.png)
+
 ## Limitations
 
 - 7z/RAR extraction relies on external tools (7z or unar). Post-extraction
