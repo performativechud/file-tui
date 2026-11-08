@@ -53,7 +53,7 @@ ImageMagick, ffmpeg, poppler, pandoc, LibreOffice, calibre, tesseract, 7-Zip.
 
 ZIP, TAR, and compressed single-file archives (gz, bz2, xz, zst) are checked
 during extraction: total bytes (default 2 GiB) and entry count (default 200k).
-Override with `FILE_CLI_MAX_EXTRACT_MB` and `FILE_CLI_MAX_EXTRACT_ENTRIES`.
+Override with `FILE_TUI_MAX_EXTRACT_MB` and `FILE_TUI_MAX_EXTRACT_ENTRIES`.
 
 7z and RAR extraction is delegated to the external 7z/unar tool, which has no
 built-in extraction budget. After extraction completes, the extracted directory

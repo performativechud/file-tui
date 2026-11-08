@@ -33,10 +33,16 @@ type extractBudget struct {
 
 func newExtractBudget() *extractBudget {
 	b := &extractBudget{maxBytes: defaultMaxExtractBytes, maxEntries: defaultMaxExtractEntries}
-	if n, err := strconv.ParseInt(os.Getenv("FILE_CLI_MAX_EXTRACT_MB"), 10, 64); err == nil && n > 0 {
+	getEnv := func(newKey, oldKey string) string {
+		if v := os.Getenv(newKey); v != "" {
+			return v
+		}
+		return os.Getenv(oldKey)
+	}
+	if n, err := strconv.ParseInt(getEnv("FILE_TUI_MAX_EXTRACT_MB", "FILE_CLI_MAX_EXTRACT_MB"), 10, 64); err == nil && n > 0 {
 		b.maxBytes = n << 20
 	}
-	if n, err := strconv.Atoi(os.Getenv("FILE_CLI_MAX_EXTRACT_ENTRIES")); err == nil && n > 0 {
+	if n, err := strconv.Atoi(getEnv("FILE_TUI_MAX_EXTRACT_ENTRIES", "FILE_CLI_MAX_EXTRACT_ENTRIES")); err == nil && n > 0 {
 		b.maxEntries = n
 	}
 	return b
