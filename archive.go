@@ -190,6 +190,7 @@ func extractArchive(ctx context.Context, src string, k Kind, dst string) error {
 		if err := writeStream(target, r, 0o644, budget); err != nil {
 			return fmt.Errorf("extract %s: %w", target, err)
 		}
+		return nil
 
 	case "7z", "rar":
 		if _, err := exec.LookPath("7z"); err == nil {
@@ -516,7 +517,9 @@ func writeStream(dst string, r io.Reader, mode fs.FileMode, budget *extractBudge
 		cerr = err
 	}
 	if cerr == nil {
-		_ = os.Chmod(dst, mode)
+		// Only permission bits are meaningful for extracted files; strip any
+		// setuid/setgid/sticky bits a crafted archive header could carry.
+		_ = os.Chmod(dst, mode.Perm())
 	}
 	return cerr
 }

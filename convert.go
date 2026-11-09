@@ -291,7 +291,7 @@ func ffmpegProgress(line string, dur float64, emit func(Progress)) {
 func convertPandocPDF(ctx context.Context, src, out string) error {
 	for _, b := range []string{"pdflatex", "xelatex", "lualatex", "tectonic", "typst"} {
 		if _, err := exec.LookPath(b); err == nil {
-			return runCmd(ctx, "pandoc", []string{src, "-o", out}, nil)
+			return runCmd(ctx, "pandoc", []string{src, "-o", out, "--pdf-engine=" + b}, nil)
 		}
 	}
 	f, err := os.CreateTemp(filepath.Dir(out), ".file-tui-*.html")

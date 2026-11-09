@@ -149,8 +149,8 @@ func TestWriteStreamNoSUID(t *testing.T) {
 		t.Fatal(err)
 	}
 	fi, _ := os.Stat(dst)
-	if fi.Mode().Perm()&0o4000 != 0 {
-		t.Errorf("SUID bit must be stripped, got mode %v", fi.Mode().Perm())
+	if fi.Mode()&os.ModeSetuid != 0 || fi.Mode()&os.ModeSetgid != 0 || fi.Mode()&os.ModeSticky != 0 {
+		t.Errorf("special mode bits must be stripped, got mode %v", fi.Mode())
 	}
 }
 

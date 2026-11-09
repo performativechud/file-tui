@@ -4,3 +4,6 @@ file-tui.exe
 
 # GitNexus index cache
 .gitnexus/
+
+# Hermes local state
+.hermes/

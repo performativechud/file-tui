@@ -228,6 +228,9 @@ func TestConvertCalibreEpubToTxt(t *testing.T) {
 	out := planSingle(epub, "txt")
 	if _, err := convert(context.Background(), epub, kindOf("epub"),
 		Target{Ext: "txt", Engine: "calibre"}, out, "", nil); err != nil {
+		if strings.Contains(err.Error(), "ModuleNotFoundError") || strings.Contains(err.Error(), "No module named") {
+			t.Skip("calibre installation is missing Python dependencies: " + err.Error())
+		}
 		t.Fatal(err)
 	}
 	b, err := os.ReadFile(out)
@@ -280,6 +283,38 @@ func TestArchive7zToTarGz(t *testing.T) {
 	}
 	if !strings.Contains(strings.Join(names, ","), "a.txt") {
 		t.Fatalf("missing entry: %v", names)
+	}
+}
+
+func TestExtractSingleCompressedArchive(t *testing.T) {
+	dir := t.TempDir()
+	src := filepath.Join(dir, "note.txt.gz")
+	f, err := os.Create(src)
+	if err != nil {
+		t.Fatal(err)
+	}
+	gz := gzip.NewWriter(f)
+	if _, err := gz.Write([]byte("hello gzip")); err != nil {
+		t.Fatal(err)
+	}
+	if err := gz.Close(); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	k, err := detectFile(src)
+	if err != nil || k.ID != "gz" {
+		t.Fatalf("detect gz: %v %q", err, k.ID)
+	}
+	dst := filepath.Join(dir, "out")
+	if err := extractArchive(context.Background(), src, k, dst); err != nil {
+		t.Fatal(err)
+	}
+	b, err := os.ReadFile(filepath.Join(dst, "note.txt"))
+	if err != nil || string(b) != "hello gzip" {
+		t.Fatalf("extracted content: %v %q", err, b)
 	}
 }
 

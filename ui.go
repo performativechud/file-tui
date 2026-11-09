@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -104,6 +105,10 @@ func (m *model) loadResolved(p string) {
 	fi, err := os.Stat(p)
 	if err != nil {
 		m.toast("cannot read: " + err.Error())
+		return
+	}
+	if fi.IsDir() {
+		m.toast("that is a directory, drop a file")
 		return
 	}
 	m.src, m.kind = p, k
@@ -853,10 +858,22 @@ func humanSize(n int64) string {
 	return fmt.Sprintf("%.1f %cB", float64(n)/float64(div), "KMGTPE"[exp])
 }
 
+func folderOpenerBinary(goos string) string {
+	switch goos {
+	case "darwin":
+		return "open"
+	case "windows":
+		return "explorer"
+	default:
+		return "xdg-open"
+	}
+}
+
 func openFolder(dir string) {
-	if _, err := exec.LookPath("xdg-open"); err != nil {
+	opener := folderOpenerBinary(runtime.GOOS)
+	if _, err := exec.LookPath(opener); err != nil {
 		return
 	}
-	cmd := exec.Command("xdg-open", dir)
+	cmd := exec.Command(opener, dir)
 	_ = cmd.Start()
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strings"
 
@@ -96,8 +97,13 @@ func splitPath(p string) (string, string) {
 		return p, ""
 	}
 
-	// Find the last path separator.
-	idx := strings.LastIndexAny(p, "/\\")
+	// Find the last path separator. Backslash is only a separator on
+	// Windows; on Unix it is a valid filename character.
+	separators := "/"
+	if runtime.GOOS == "windows" {
+		separators = "/\\"
+	}
+	idx := strings.LastIndexAny(p, separators)
 	if idx < 0 {
 		// No separator: treat as prefix in current directory.
 		return "", p

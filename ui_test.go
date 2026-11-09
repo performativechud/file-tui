@@ -3,12 +3,29 @@ package main
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
+
+func TestOpenFolderSelectsOpener(t *testing.T) {
+	cases := []struct {
+		goos string
+		want string
+	}{
+		{"darwin", "open"},
+		{"windows", "explorer"},
+		{"linux", "xdg-open"},
+	}
+	for _, tc := range cases {
+		if got := folderOpenerBinary(tc.goos); got != tc.want {
+			t.Errorf("GOOS=%s: got %q, want %q", tc.goos, got, tc.want)
+		}
+	}
+}
 
 func TestEmptyViewRenders(t *testing.T) {
 	m := newModel("", fakeTools())
@@ -695,5 +712,29 @@ func TestAutocompleteEnterOnDirectory(t *testing.T) {
 	// After Enter on dir, in should be completed with trailing /
 	if !strings.HasSuffix(m.in, "/") {
 		t.Errorf("Enter on dir should complete with /, got %q", m.in)
+	}
+}
+
+// TestAutocompleteLiteralBackslash verifies a backslash in a filename is not
+// treated as a separator on non-Windows platforms.
+func TestAutocompleteLiteralBackslash(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("backslash is a path separator on Windows")
+	}
+	dir := t.TempDir()
+	name := "weird\\name.txt"
+	if err := os.WriteFile(filepath.Join(dir, name), []byte("x"), 0o644); err != nil {
+		t.Fatal(err)
+	}
+
+	suggs := autocomplete(dir + "/weird")
+	found := false
+	for _, s := range suggs {
+		if s.name == name {
+			found = true
+		}
+	}
+	if !found {
+		t.Fatalf("expected %q in suggestions, got %+v", name, suggs)
 	}
 }
