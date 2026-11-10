@@ -203,9 +203,9 @@ func expandUserDir(dir string) string {
 	// Look up the user
 	if u, err := lookupUserFunc(username); err == nil {
 		if subpath == "" {
-			return u.HomeDir
+			return filepath.ToSlash(u.HomeDir)
 		}
-		return filepath.Join(u.HomeDir, subpath[1:]) // skip leading /
+		return filepath.ToSlash(filepath.Join(u.HomeDir, subpath[1:])) // skip leading /
 	}
 
 	// User not found; return original unchanged
