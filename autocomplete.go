@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/user"
 	"path/filepath"
 	"runtime"
 	"sort"
@@ -12,6 +13,9 @@ import (
 
 // homeDirFunc is the home-directory resolver; tests may override it for determinism.
 var homeDirFunc = os.UserHomeDir
+
+// lookupUserFunc looks up a user by name; tests may override it for isolation.
+var lookupUserFunc = user.Lookup
 
 // suggestion is a single autocomplete entry.
 type suggestion struct {
@@ -29,11 +33,11 @@ func autocomplete(raw string) []suggestion {
 		return nil
 	}
 
-	// Determine the directory to scan and the prefix to filter by.
+// Determine the directory to scan and the prefix to filter by.
 	dir, prefix := splitPath(raw)
 
-	// Expand ~ for filesystem lookup.
-	lookupDir := dir
+// Expand ~ for filesystem lookup.
+	var lookupDir string
 	if dir == "~" || strings.HasPrefix(dir, "~/") {
 		if home, err := homeDirFunc(); err == nil {
 			if dir == "~" {
@@ -42,9 +46,23 @@ func autocomplete(raw string) []suggestion {
 				lookupDir = filepath.Join(home, dir[2:])
 			}
 		}
-	}
-	if lookupDir == "" {
-		lookupDir = "."
+	} else if dir != "" && dir[0] == '~' && !strings.HasPrefix(dir, "~/") {
+		// Handle ~username: dir starts with ~ but isn't ~/ (e.g., "~testuser")
+		username := dir[1:] // strip the leading ~
+		// Strip trailing slash if present for user lookup
+		if username != "" && username[len(username)-1] == '/' {
+			username = username[:len(username)-1]
+		}
+		if u, err := lookupUserFunc(username); err == nil {
+			lookupDir = u.HomeDir
+		} else {
+			// User lookup failed; return no suggestions rather than falling back
+			// to the current directory which would match everything.
+			return nil
+		}
+	} else {
+		// No ~ prefix: use the directory from splitPath
+		lookupDir = dir
 	}
 
 	entries, err := os.ReadDir(lookupDir)
@@ -89,19 +107,50 @@ func autocomplete(raw string) []suggestion {
 
 // splitPath splits a path into (directory, prefix) for autocomplete.
 // For "foo/bar/baz", returns ("foo/bar", "baz").
-// For "foo", returns (".", "foo") or ("", "foo") depending on whether
-// it looks like an absolute/relative path.
+// For "foo", returns ("", "foo").
+// For "~", returns ("~", "").
+// For "~user", returns ("~user", "").
+// For "~user/file", returns ("~user", "file").
 func splitPath(p string) (string, string) {
-	// Handle trailing slash: user is browsing a directory.
+	// Handle the special case of "~" alone.
+	if p == "~" {
+		return "~", ""
+	}
+
+	// Handle ~username: treat as directory name with optional /path
+	if len(p) > 1 && p[0] == '~' && !strings.HasPrefix(p, "~/") {
+		// Handle ~username/ (trailing slash) specially
+		if p[len(p)-1] == '/' {
+			// ~username/ : return ("~username/", "")
+			return p[:len(p)-1] + "/", ""
+		}
+		// Find the first slash to separate username from path
+		slashIdx := strings.Index(p[1:], "/")
+		if slashIdx >= 0 {
+			// ~username/path: return ("~username", "path")
+			username := p[:slashIdx+1] // includes the ~
+			path := p[slashIdx+1:]     // after the slash
+			// Strip leading / from path
+			if path[:1] == "/" {
+				path = path[1:]
+			}
+			return username, path
+		} else {
+			// ~username (no slash): return ("~username", "")
+			return p, ""
+		}
+	}
+
+// Handle trailing slash: user is browsing a directory.
 	if strings.HasSuffix(p, "/") {
 		return p, ""
 	}
 
-	// Find the last path separator. Backslash is only a separator on
-	// Windows; on Unix it is a valid filename character.
+// Find the last path separator. Backslash is only a separator on
+// Windows; on Unix it is a valid filename character.
 	separators := "/"
 	if runtime.GOOS == "windows" {
-		separators = "/\\"
+		separators = "/"
 	}
 	idx := strings.LastIndexAny(p, separators)
 	if idx < 0 {
@@ -117,14 +166,6 @@ func splitPath(p string) (string, string) {
 	return dir, prefix
 }
 
-// fetchSuggestions is an async Bubble Tea command that reads directory entries.
-// It returns a suggMsg with the request ID for stale-result prevention.
-func fetchSuggestions(id int, raw string) tea.Cmd {
-	return func() tea.Msg {
-		return suggMsg{id: id, path: raw, sugg: autocomplete(raw)}
-	}
-}
-
 // joinPath joins a directory and name, handling empty dir and ~ prefix.
 func joinPath(dir, name string) string {
 	if dir == "" {
@@ -134,4 +175,47 @@ func joinPath(dir, name string) string {
 		return dir + name
 	}
 	return dir + "/" + name
+}
+
+// expandUserDir resolves a ~user or ~user/path prefix to the user's home
+// directory. On lookup failure the original dir is returned unchanged so the
+// caller can fall back to a relative path lookup (which will then fail to
+// stat and produce no suggestions, rather than crashing).
+func expandUserDir(dir string) string {
+	if dir == "~" {
+		return "~"
+	}
+
+// Strip the leading ~
+	rest := dir[1:]
+
+	// Find the first / to separate username from path
+	slashIdx := strings.Index(rest, "/")
+	var username, subpath string
+	if slashIdx >= 0 {
+		username = rest[:slashIdx]
+		subpath = rest[slashIdx:] // includes the /
+	} else {
+		username = rest
+		subpath = ""
+	}
+
+// Look up the user
+	if u, err := lookupUserFunc(username); err == nil {
+		if subpath == "" {
+			return u.HomeDir
+		}
+		return filepath.Join(u.HomeDir, subpath[1:]) // skip leading /
+	}
+
+// User not found; return original unchanged
+	return dir
+}
+
+// fetchSuggestions is an async Bubble Tea command that reads directory entries.
+// It returns a suggMsg with the request ID for stale-result prevention.
+func fetchSuggestions(id int, raw string) tea.Cmd {
+	return func() tea.Msg {
+		return suggMsg{id: id, path: raw, sugg: autocomplete(raw)}
+	}
 }

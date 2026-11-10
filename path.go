@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 )
@@ -80,6 +81,21 @@ func normalizePath(s string) string {
 	if s == "~" || strings.HasPrefix(s, "~/") {
 		if home, err := os.UserHomeDir(); err == nil {
 			s = home + s[1:]
+		}
+	} else if strings.HasPrefix(s, "~") {
+		// ~user or ~user/path: expand via os/user.Lookup.
+		rest := s[1:]
+		var userPart, tail string
+		if idx := strings.IndexByte(rest, '/'); idx >= 0 {
+			userPart, tail = rest[:idx], rest[idx:]
+		} else {
+			userPart, tail = rest, ""
+		}
+		if userPart != "" {
+			if u, err := user.Lookup(userPart); err == nil {
+				s = u.HomeDir + tail
+			}
+			// On lookup failure, leave s unchanged so callers see the literal path.
 		}
 	}
 	if s == "" {

@@ -31,10 +31,25 @@ type Tools struct {
 }
 
 // has reports whether a probe key is satisfied, with a human readable reason.
+// Requirements can be ANDed with & (e.g. "bin:7z|unar&bin:xz" means
+// "(7z OR unar) AND xz"). Each &-separated clause is checked independently;
+// all must pass for the whole need to be satisfied.
 func (t *Tools) has(need string) (bool, string) {
 	if need == "" || need == "go" {
 		return true, ""
 	}
+	// Split on & for AND semantics between requirements.
+	parts := strings.Split(need, "&")
+	for _, part := range parts {
+		ok, reason := t.hasOne(part)
+		if !ok {
+			return false, reason
+		}
+	}
+	return true, ""
+}
+
+func (t *Tools) hasOne(need string) (bool, string) {
 	kind, val, ok := strings.Cut(need, ":")
 	if !ok {
 		kind, val = need, ""
@@ -245,8 +260,16 @@ func targetsFor(k Kind, tools *Tools) []Target {
 	case "archive":
 		out = append(out, archiveTargets(true)...)
 		if k.ID == "7z" || k.ID == "rar" {
+			// For 7z/rar sources, add the source extraction requirement to each target
+			// but preserve the target's original requirement (e.g., tar.xz needs xz).
+			// Use & as AND separator within bin: needs so has() can express
+			// "(7z OR unar) AND xz" instead of just "7z OR unar".
 			for i := range out {
-				out[i].Need = "bin:7z|unar"
+				if out[i].Need == "" || out[i].Need == "go" {
+					out[i].Need = "bin:7z|unar"
+				} else {
+					out[i].Need = "bin:7z|unar&" + out[i].Need
+				}
 			}
 		}
 	case "data":

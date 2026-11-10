@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/user"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -192,9 +193,22 @@ func TestResolvePathEdgeCases(t *testing.T) {
 	file := filepath.Join(dir, "my file.png")
 	os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
 
-	// ~user is not expanded (only ~ and ~/ are).
+	// ~user expands to the current user's home directory.
+	cur, curErr := user.Current()
+	if curErr == nil {
+		file2 := filepath.Join(cur.HomeDir, "my file.png")
+		os.WriteFile(file2, []byte("\x89PNG\r\n\x1a\n"), 0o644)
+		got3, err3 := resolvePath("~" + cur.Username + "/my file.png")
+		if err3 != nil {
+			t.Errorf("~user expansion: %v", err3)
+		} else if got3 != file2 {
+			t.Errorf("~user resolved to %q, want %q", got3, file2)
+		}
+	}
+
+	// A nonexistent ~user falls back to the literal path and fails to stat.
 	if _, err := resolvePath("~alice/file"); err == nil {
-		t.Error("~user path must not be expanded")
+		t.Error("nonexistent ~user must not resolve")
 	}
 
 	// file:// with a host is rejected.
