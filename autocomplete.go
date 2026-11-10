@@ -33,10 +33,10 @@ func autocomplete(raw string) []suggestion {
 		return nil
 	}
 
-// Determine the directory to scan and the prefix to filter by.
+	// Determine the directory to scan and the prefix to filter by.
 	dir, prefix := splitPath(raw)
 
-// Expand ~ for filesystem lookup.
+	// Expand ~ for filesystem lookup.
 	var lookupDir string
 	if dir == "~" || strings.HasPrefix(dir, "~/") {
 		if home, err := homeDirFunc(); err == nil {
@@ -141,13 +141,13 @@ func splitPath(p string) (string, string) {
 		}
 	}
 
-// Handle trailing slash: user is browsing a directory.
+	// Handle trailing slash: user is browsing a directory.
 	if strings.HasSuffix(p, "/") {
 		return p, ""
 	}
 
-// Find the last path separator. Backslash is only a separator on
-// Windows; on Unix it is a valid filename character.
+	// Find the last path separator. Backslash is only a separator on
+	// Windows; on Unix it is a valid filename character.
 	separators := "/"
 	if runtime.GOOS == "windows" {
 		separators = "/"
@@ -186,7 +186,7 @@ func expandUserDir(dir string) string {
 		return "~"
 	}
 
-// Strip the leading ~
+	// Strip the leading ~
 	rest := dir[1:]
 
 	// Find the first / to separate username from path
@@ -200,7 +200,7 @@ func expandUserDir(dir string) string {
 		subpath = ""
 	}
 
-// Look up the user
+	// Look up the user
 	if u, err := lookupUserFunc(username); err == nil {
 		if subpath == "" {
 			return u.HomeDir
@@ -208,7 +208,7 @@ func expandUserDir(dir string) string {
 		return filepath.Join(u.HomeDir, subpath[1:]) // skip leading /
 	}
 
-// User not found; return original unchanged
+	// User not found; return original unchanged
 	return dir
 }
 
