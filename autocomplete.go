@@ -150,7 +150,7 @@ func splitPath(p string) (string, string) {
 	// Windows; on Unix it is a valid filename character.
 	separators := "/"
 	if runtime.GOOS == "windows" {
-		separators = "/"
+		separators = "/\\"
 	}
 	idx := strings.LastIndexAny(p, separators)
 	if idx < 0 {

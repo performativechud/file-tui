@@ -262,7 +262,22 @@ func ffmpegProgress(line string, dur float64, emit func(Progress)) {
 	case strings.HasPrefix(line, "out_time_us="):
 		val = strings.TrimPrefix(line, "out_time_us=")
 	case strings.HasPrefix(line, "out_time_ms="):
+		// ffmpeg reports out_time_ms in milliseconds, not microseconds.
+		// Parse it with a 1e3 divisor so the percentage is correct.
 		val = strings.TrimPrefix(line, "out_time_ms=")
+		us, err := strconv.ParseInt(strings.TrimSpace(val), 10, 64)
+		if err != nil {
+			return
+		}
+		pct := int(float64(us) / 1e3 / dur * 100)
+		if pct < 0 {
+			pct = 0
+		}
+		if pct > 100 {
+			pct = 100
+		}
+		emit(Progress{Percent: pct})
+		return
 	case line == "progress=end":
 		emit(Progress{Percent: 100})
 		return
