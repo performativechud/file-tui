@@ -23,7 +23,7 @@ func probeInfo(p string, k Kind, tools *Tools) string {
 				cmd := exec.CommandContext(ctx, "magick", "identify", "-format", "%wx%h", "fd:0")
 				cmd.Stdin = f
 				out, err := cmd.Output()
-				f.Close()
+				_ = f.Close()
 				if err == nil {
 					return strings.TrimSpace(string(out))
 				}

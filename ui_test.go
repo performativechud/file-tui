@@ -39,7 +39,7 @@ func TestEmptyViewRenders(t *testing.T) {
 func TestReadyViewHidesLockedAndShowsOutput(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 200, 32
@@ -78,7 +78,7 @@ func TestReadyViewHidesLockedAndShowsOutput(t *testing.T) {
 func TestStartRefusesLockedTarget(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	tools := fakeTools()
 	delete(tools.Magick, "WEBP")
@@ -118,7 +118,7 @@ func TestHumanSize(t *testing.T) {
 func TestHitboxRowsMatchRenderedRows(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	for _, sz := range [][2]int{{120, 40}, {100, 32}, {80, 24}} {
 		m := newModel(src, fakeTools())
@@ -149,7 +149,7 @@ func TestHitboxRowsMatchRenderedRows(t *testing.T) {
 func TestRunningViewRendersProgressAndWorkingStatus(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -171,7 +171,7 @@ func TestRunningViewRendersProgressAndWorkingStatus(t *testing.T) {
 func TestDoneViewRendersResult(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -193,7 +193,7 @@ func TestDoneViewRendersResult(t *testing.T) {
 func TestErrorViewRendersError(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -212,7 +212,7 @@ func TestErrorViewRendersError(t *testing.T) {
 func TestResetClearsAllState(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -264,7 +264,7 @@ func TestToastLifecycle(t *testing.T) {
 func TestMoveWrapsAround(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -287,7 +287,7 @@ func TestMoveWrapsAround(t *testing.T) {
 func TestTabTogglesLocked(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -308,7 +308,7 @@ func TestTabTogglesLocked(t *testing.T) {
 func TestEscResetsFromReady(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -334,7 +334,7 @@ func TestWindowSizeMsgUpdatesDimensions(t *testing.T) {
 func TestNarrowTerminalNoPanic(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	for _, sz := range [][2]int{{20, 8}, {34, 12}, {80, 24}, {100, 32}, {200, 60}} {
 		m := newModel(src, fakeTools())
@@ -354,7 +354,7 @@ func TestNarrowTerminalNoPanic(t *testing.T) {
 func TestMouseWheelMovesSelection(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -376,7 +376,7 @@ func TestMouseWheelMovesSelection(t *testing.T) {
 func TestMouseClickSelectsRow(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -396,7 +396,7 @@ func TestMouseClickSelectsRow(t *testing.T) {
 func TestHitboxNarrowTerminals(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	for _, sz := range [][2]int{{20, 24}, {34, 12}, {50, 24}, {160, 50}} {
 		m := newModel(src, fakeTools())
@@ -420,7 +420,7 @@ func TestHitboxNarrowTerminals(t *testing.T) {
 func TestCtrlCCancelsDuringRunning(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 100, 32
@@ -465,8 +465,8 @@ func lineText(lines []string, y int) string {
 // TestAutocompleteBasic verifies autocomplete returns matching directories.
 func TestAutocompleteBasic(t *testing.T) {
 	home := t.TempDir()
-	os.MkdirAll(filepath.Join(home, "Documents"), 0o755)
-	os.MkdirAll(filepath.Join(home, "Downloads"), 0o755)
+	_ = os.MkdirAll(filepath.Join(home, "Documents"), 0o755)
+	_ = os.MkdirAll(filepath.Join(home, "Downloads"), 0o755)
 
 	orig := homeDirFunc
 	homeDirFunc = func() (string, error) { return home, nil }
@@ -506,7 +506,7 @@ func TestAutocompleteEmptyInput(t *testing.T) {
 // TestAutocompleteHomeExpansion verifies ~ expands to home directory.
 func TestAutocompleteHomeExpansion(t *testing.T) {
 	home := t.TempDir()
-	os.MkdirAll(filepath.Join(home, ".file-tui-test-ac"), 0o755)
+	_ = os.MkdirAll(filepath.Join(home, ".file-tui-test-ac"), 0o755)
 
 	orig := homeDirFunc
 	homeDirFunc = func() (string, error) { return home, nil }
@@ -521,8 +521,8 @@ func TestAutocompleteHomeExpansion(t *testing.T) {
 // TestAutocompleteAbsolutePath verifies absolute path completion.
 func TestAutocompleteAbsolutePath(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "subdir"), 0o755)
-	os.WriteFile(filepath.Join(dir, "file.txt"), []byte("x"), 0o644)
+	_ = os.MkdirAll(filepath.Join(dir, "subdir"), 0o755)
+	_ = os.WriteFile(filepath.Join(dir, "file.txt"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/")
 	if len(suggs) < 2 {
@@ -544,8 +544,8 @@ func TestAutocompleteRelativePath(t *testing.T) {
 // TestAutocompleteSpaces verifies paths with spaces.
 func TestAutocompleteSpaces(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "my dir"), 0o755)
-	os.WriteFile(filepath.Join(dir, "my file.txt"), []byte("x"), 0o644)
+	_ = os.MkdirAll(filepath.Join(dir, "my dir"), 0o755)
+	_ = os.WriteFile(filepath.Join(dir, "my file.txt"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/my")
 	if len(suggs) < 2 {
@@ -556,8 +556,8 @@ func TestAutocompleteSpaces(t *testing.T) {
 // TestAutocompleteCaseInsensitive verifies case-insensitive matching.
 func TestAutocompleteCaseInsensitive(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "Documents"), 0o755)
-	os.MkdirAll(filepath.Join(dir, "downloads"), 0o755)
+	_ = os.MkdirAll(filepath.Join(dir, "Documents"), 0o755)
+	_ = os.MkdirAll(filepath.Join(dir, "downloads"), 0o755)
 
 	suggs := autocomplete(dir + "/d")
 	if len(suggs) < 2 {
@@ -568,9 +568,9 @@ func TestAutocompleteCaseInsensitive(t *testing.T) {
 // TestAutocompleteDirFileSharedPrefix verifies dirs and files with same prefix.
 func TestAutocompleteDirFileSharedPrefix(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "data"), 0o755)
-	os.WriteFile(filepath.Join(dir, "data.txt"), []byte("x"), 0o644)
-	os.WriteFile(filepath.Join(dir, "database.json"), []byte("x"), 0o644)
+	_ = os.MkdirAll(filepath.Join(dir, "data"), 0o755)
+	_ = os.WriteFile(filepath.Join(dir, "data.txt"), []byte("x"), 0o644)
+	_ = os.WriteFile(filepath.Join(dir, "database.json"), []byte("x"), 0o644)
 
 	suggs := autocomplete(dir + "/data")
 	if len(suggs) < 3 {
@@ -586,7 +586,7 @@ func TestAutocompleteDirFileSharedPrefix(t *testing.T) {
 func TestAutocompleteMoreThanEight(t *testing.T) {
 	dir := t.TempDir()
 	for i := 0; i < 12; i++ {
-		os.MkdirAll(filepath.Join(dir, "dir"+string(rune('a'+i))), 0o755)
+		_ = os.MkdirAll(filepath.Join(dir, "dir"+string(rune('a'+i))), 0o755)
 	}
 
 	suggs := autocomplete(dir + "/")
@@ -598,8 +598,8 @@ func TestAutocompleteMoreThanEight(t *testing.T) {
 // TestAutocompleteDirFirstSorting verifies directories sort before files.
 func TestAutocompleteDirFirstSorting(t *testing.T) {
 	dir := t.TempDir()
-	os.WriteFile(filepath.Join(dir, "aaa.txt"), []byte("x"), 0o644)
-	os.MkdirAll(filepath.Join(dir, "zzz"), 0o755)
+	_ = os.WriteFile(filepath.Join(dir, "aaa.txt"), []byte("x"), 0o644)
+	_ = os.MkdirAll(filepath.Join(dir, "zzz"), 0o755)
 
 	suggs := autocomplete(dir + "/")
 	if len(suggs) < 2 {
@@ -621,7 +621,7 @@ func TestAutocompleteNonexistentPath(t *testing.T) {
 // TestAutocompleteTabCompletion verifies Tab completes selected suggestion.
 func TestAutocompleteTabCompletion(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "Documents"), 0o755)
+	_ = os.MkdirAll(filepath.Join(dir, "Documents"), 0o755)
 
 	m := newModel("", fakeTools())
 	m.width, m.height = 100, 32
@@ -646,7 +646,7 @@ func TestAutocompleteTabCompletion(t *testing.T) {
 func TestAutocompleteUpDownNavigation(t *testing.T) {
 	dir := t.TempDir()
 	for i := 0; i < 3; i++ {
-		os.MkdirAll(filepath.Join(dir, "dir"+string(rune('a'+i))), 0o755)
+		_ = os.MkdirAll(filepath.Join(dir, "dir"+string(rune('a'+i))), 0o755)
 	}
 
 	m := newModel("", fakeTools())
@@ -672,7 +672,7 @@ func TestAutocompleteUpDownNavigation(t *testing.T) {
 // TestAutocompleteEscDismissal verifies Esc clears suggestions.
 func TestAutocompleteEscDismissal(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "subdir"), 0o755)
+	_ = os.MkdirAll(filepath.Join(dir, "subdir"), 0o755)
 
 	m := newModel("", fakeTools())
 	m.width, m.height = 100, 32
@@ -692,7 +692,7 @@ func TestAutocompleteEscDismissal(t *testing.T) {
 // TestAutocompleteEnterOnDirectory verifies Enter on dir completes path.
 func TestAutocompleteEnterOnDirectory(t *testing.T) {
 	dir := t.TempDir()
-	os.MkdirAll(filepath.Join(dir, "subdir"), 0o755)
+	_ = os.MkdirAll(filepath.Join(dir, "subdir"), 0o755)
 
 	m := newModel("", fakeTools())
 	m.width, m.height = 100, 32

@@ -134,13 +134,13 @@ func TestNaming(t *testing.T) {
 
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.jpg")
-	os.WriteFile(src, []byte("x"), 0o644)
+	_ = os.WriteFile(src, []byte("x"), 0o644)
 
 	out := planSingle(src, "png")
 	if filepath.Base(out) != "file-tui-cat.png" {
 		t.Fatalf("output name: %s", out)
 	}
-	os.WriteFile(out, []byte("x"), 0o644)
+	_ = os.WriteFile(out, []byte("x"), 0o644)
 	out2 := planSingle(src, "png")
 	if filepath.Base(out2) != "file-tui-cat-2.png" {
 		t.Fatalf("collision name: %s", out2)
@@ -150,7 +150,7 @@ func TestNaming(t *testing.T) {
 	if filepath.Base(base) != "file-tui-cat" {
 		t.Fatalf("multi base: %s", base)
 	}
-	os.WriteFile(base+"-1.png", []byte("x"), 0o644)
+	_ = os.WriteFile(base+"-1.png", []byte("x"), 0o644)
 	base2 := planMultiBase(src, "png")
 	if filepath.Base(base2) != "file-tui-cat-2" {
 		t.Fatalf("multi collision base: %s", base2)
@@ -160,7 +160,7 @@ func TestNaming(t *testing.T) {
 func TestResolvePathForms(t *testing.T) {
 	dir := t.TempDir()
 	file := filepath.Join(dir, "my file.png")
-	os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
+	_ = os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
 
 	forms := []string{
 		file,
@@ -191,13 +191,13 @@ func TestResolvePathForms(t *testing.T) {
 func TestResolvePathEdgeCases(t *testing.T) {
 	dir := t.TempDir()
 	file := filepath.Join(dir, "my file.png")
-	os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
+	_ = os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
 
 	// ~user expands to the current user's home directory.
 	cur, curErr := user.Current()
 	if curErr == nil {
 		file2 := filepath.Join(cur.HomeDir, "my file.png")
-		os.WriteFile(file2, []byte("\x89PNG\r\n\x1a\n"), 0o644)
+		_ = os.WriteFile(file2, []byte("\x89PNG\r\n\x1a\n"), 0o644)
 		got3, err3 := resolvePath("~" + cur.Username + "/my file.png")
 		if err3 != nil {
 			t.Errorf("~user expansion: %v", err3)
@@ -248,5 +248,156 @@ func TestPDFTargetNeedsAWorkingPrinter(t *testing.T) {
 	tools.Bins["soffice"] = true
 	if ok, reason := pdf.Available(tools); !ok {
 		t.Fatalf("pdf with libreoffice must be available: %s", reason)
+	}
+}
+
+// TestHasAndSemantics tests the & (AND) operator in has() needs.
+func TestHasAndSemantics(t *testing.T) {
+	tools := &Tools{
+		Bins:     map[string]bool{"7z": true, "xz": false},
+		Magick:   map[string]bool{},
+		Encoders: map[string]bool{},
+		Langs:    map[string]bool{},
+	}
+
+	// Both 7z and xz required: "(7z OR unar) AND xz" -> since 7z is true but xz is false, should fail
+	ok, reason := tools.has("bin:7z|unar&bin:xz")
+	if ok {
+		t.Fatalf("expected false when xz missing, got true")
+	}
+	if !strings.Contains(reason, "xz") {
+		t.Fatalf("reason should mention xz, got %q", reason)
+	}
+
+	// Now provide xz, should succeed
+	tools.Bins["xz"] = true
+	ok, reason = tools.has("bin:7z|unar&bin:xz")
+	if !ok {
+		t.Fatalf("expected true when both 7z and xz present, got false: %s", reason)
+	}
+
+	// Test with unar instead of 7z
+	tools2 := &Tools{
+		Bins:     map[string]bool{"unar": true, "xz": true},
+		Magick:   map[string]bool{},
+		Encoders: map[string]bool{},
+		Langs:    map[string]bool{},
+	}
+	ok, reason = tools2.has("bin:7z|unar&bin:xz")
+	if !ok {
+		t.Fatalf("expected true with unar and xz, got false: %s", reason)
+	}
+
+	// Test single clause (no &)
+	ok, _ = tools.has("bin:7z")
+	if !ok {
+		t.Fatal("single clause bin:7z should succeed")
+	}
+
+	// Test empty need
+	ok, _ = tools.has("")
+	if !ok {
+		t.Fatal("empty need should succeed")
+	}
+}
+
+// TestTargetsFor7zSource verifies targets for 7z source include extraction requirement.
+func TestTargetsFor7zSource(t *testing.T) {
+	tools := fakeTools()
+	tools.Bins["7z"] = true
+	tools.Bins["xz"] = true
+	tools.Bins["zstd"] = true
+
+	targets := targetExts(targetsFor(kindOf("7z"), tools))
+
+	// tar.xz should have Need = "bin:7z|unar&bin:xz"
+	tarXz := targets["tar.xz"]
+	if tarXz.Need != "bin:7z|unar&bin:xz" {
+		t.Errorf("tar.xz Need = %q, want \"bin:7z|unar&bin:xz\"", tarXz.Need)
+	}
+
+	// tar.zst should have Need = "bin:7z|unar&bin:zstd"
+	tarZst := targets["tar.zst"]
+	if tarZst.Need != "bin:7z|unar&bin:zstd" {
+		t.Errorf("tar.zst Need = %q, want \"bin:7z|unar&bin:zstd\"", tarZst.Need)
+	}
+
+	// tar.gz should have Need = "bin:7z|unar" (only extraction requirement, no compression tool needed)
+	tarGz := targets["tar.gz"]
+	if tarGz.Need != "bin:7z|unar" {
+		t.Errorf("tar.gz Need = %q, want \"bin:7z|unar\"", tarGz.Need)
+	}
+
+	// zip should have Need = "bin:7z|unar" (just extraction)
+	zipT := targets["zip"]
+	if zipT.Need != "bin:7z|unar" {
+		t.Errorf("zip Need = %q, want \"bin:7z|unar\"", zipT.Need)
+	}
+
+	// tar should have Need = "bin:7z|unar"
+	tar := targets["tar"]
+	if tar.Need != "bin:7z|unar" {
+		t.Errorf("tar Need = %q, want \"bin:7z|unar\"", tar.Need)
+	}
+}
+
+// TestTargetsForRarSource verifies targets for rar source include extraction requirement.
+func TestTargetsForRarSource(t *testing.T) {
+	tools := fakeTools()
+	tools.Bins["7z"] = true
+	tools.Bins["xz"] = true
+	tools.Bins["zstd"] = true
+
+	targets := targetExts(targetsFor(kindOf("rar"), tools))
+
+	// All archive targets should have the 7z|unar requirement AND their original requirement
+	tarXz := targets["tar.xz"]
+	if tarXz.Need != "bin:7z|unar&bin:xz" {
+		t.Errorf("rar->tar.xz Need = %q, want \"bin:7z|unar&bin:xz\"", tarXz.Need)
+	}
+
+	tarZst := targets["tar.zst"]
+	if tarZst.Need != "bin:7z|unar&bin:zstd" {
+		t.Errorf("rar->tar.zst Need = %q, want \"bin:7z|unar&bin:zstd\"", tarZst.Need)
+	}
+
+	tarGz := targets["tar.gz"]
+	if tarGz.Need != "bin:7z|unar" {
+		t.Errorf("rar->tar.gz Need = %q, want \"bin:7z|unar\"", tarGz.Need)
+	}
+
+	zipT := targets["zip"]
+	if zipT.Need != "bin:7z|unar" {
+		t.Errorf("rar->zip Need = %q, want \"bin:7z|unar\"", zipT.Need)
+	}
+}
+
+// TestTargetsForZipSource verifies targets for zip source are NOT modified (no 7z/unar requirement).
+func TestTargetsForZipSource(t *testing.T) {
+	tools := fakeTools()
+	tools.Bins["xz"] = true
+	tools.Bins["zstd"] = true
+
+	targets := targetExts(targetsFor(kindOf("zip"), tools))
+
+	// zip source should NOT add 7z|unar requirement - it uses Go's archive/zip
+	tarXz := targets["tar.xz"]
+	if tarXz.Need != "bin:xz" {
+		t.Errorf("zip->tar.xz Need = %q, want \"bin:xz\" (no 7z/unrar)", tarXz.Need)
+	}
+
+	tarZst := targets["tar.zst"]
+	if tarZst.Need != "bin:zstd" {
+		t.Errorf("zip->tar.zst Need = %q, want \"bin:zstd\" (no 7z/unrar)", tarZst.Need)
+	}
+
+	tarGz := targets["tar.gz"]
+	if tarGz.Need != "go" {
+		t.Errorf("zip->tar.gz Need = %q, want \"go\" (no 7z/unrar)", tarGz.Need)
+	}
+
+	// zip->zip is filtered out as no-op, so it won't be in targets
+	if _, ok := targets["zip"]; ok {
+		t.Errorf("zip->zip should be filtered out as no-op")
 	}
 }

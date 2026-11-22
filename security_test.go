@@ -45,16 +45,15 @@ func TestResolvePathRejectsFileHost(t *testing.T) {
 	if _, err := resolvePath("file://host/path"); err == nil {
 		t.Error("file:// with host must be rejected")
 	}
-	if _, err := resolvePath("file:///etc/passwd"); err != nil {
-		// may or may not exist; just verify it doesn't crash
-	}
+	// may or may not exist; just verify it doesn't crash
+	_, _ = resolvePath("file:///etc/passwd")
 }
 
 // TestResolvePathReturnsAbsolute verifies all resolved paths are absolute.
 func TestResolvePathReturnsAbsolute(t *testing.T) {
 	dir := t.TempDir()
 	file := filepath.Join(dir, "test.png")
-	os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
+	_ = os.WriteFile(file, []byte("\x89PNG\r\n\x1a\n"), 0o644)
 
 	got, err := resolvePath(file)
 	if err != nil {
@@ -168,7 +167,7 @@ func TestEmptyStateViewRendersAtNarrowWidth(t *testing.T) {
 func TestDoneStateViewRendersAtNarrowWidth(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 20, 8
@@ -183,9 +182,9 @@ func TestDoneStateViewRendersAtNarrowWidth(t *testing.T) {
 // TestVerifyExtractBudgetPassesWithinLimits verifies normal extraction passes.
 func TestVerifyExtractBudgetPassesWithinLimits(t *testing.T) {
 	dir := t.TempDir()
-	os.WriteFile(filepath.Join(dir, "a.txt"), []byte("hello"), 0o644)
-	os.MkdirAll(filepath.Join(dir, "sub"), 0o755)
-	os.WriteFile(filepath.Join(dir, "sub", "b.txt"), []byte("world"), 0o644)
+	_ = os.WriteFile(filepath.Join(dir, "a.txt"), []byte("hello"), 0o644)
+	_ = os.MkdirAll(filepath.Join(dir, "sub"), 0o755)
+	_ = os.WriteFile(filepath.Join(dir, "sub", "b.txt"), []byte("world"), 0o644)
 
 	b := newExtractBudget()
 	if err := verifyExtractBudget(dir, b); err != nil {
@@ -198,7 +197,7 @@ func TestVerifyExtractBudgetBlocksTooManyEntries(t *testing.T) {
 	t.Setenv("FILE_CLI_MAX_EXTRACT_ENTRIES", "2")
 	dir := t.TempDir()
 	for i := 0; i < 3; i++ {
-		os.WriteFile(filepath.Join(dir, "f"+string(rune('a'+i))+".txt"), []byte("x"), 0o644)
+		_ = os.WriteFile(filepath.Join(dir, "f"+string(rune('a'+i))+".txt"), []byte("x"), 0o644)
 	}
 
 	b := newExtractBudget()
@@ -213,7 +212,7 @@ func TestVerifyExtractBudgetBlocksTooManyBytes(t *testing.T) {
 	t.Setenv("FILE_CLI_MAX_EXTRACT_MB", "1")
 	dir := t.TempDir()
 	data := make([]byte, 1<<20+100)
-	os.WriteFile(filepath.Join(dir, "big.bin"), data, 0o644)
+	_ = os.WriteFile(filepath.Join(dir, "big.bin"), data, 0o644)
 
 	b := newExtractBudget()
 	err := verifyExtractBudget(dir, b)
@@ -226,7 +225,7 @@ func TestVerifyExtractBudgetBlocksTooManyBytes(t *testing.T) {
 func TestErrorStateViewRendersAtNarrowWidth(t *testing.T) {
 	dir := t.TempDir()
 	src := filepath.Join(dir, "cat.png")
-	os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
+	_ = os.WriteFile(src, []byte("\x89PNG\r\n\x1a\n0000"), 0o644)
 
 	m := newModel(src, fakeTools())
 	m.width, m.height = 20, 8

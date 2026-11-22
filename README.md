@@ -38,6 +38,12 @@
 ## Install
 
 ```bash
+# One-liner (Linux/macOS)
+curl -fsSL https://raw.githubusercontent.com/performativechud/file-tui/main/install.sh | bash
+
+# Custom install directory
+curl -fsSL https://raw.githubusercontent.com/performativechud/file-tui/main/install.sh | bash -s -- -d ~/.local/bin
+
 # Go
 go install github.com/performativechud/file-tui@latest
 

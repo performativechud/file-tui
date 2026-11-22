@@ -15,7 +15,7 @@ func TestAutocompleteUserExpansion(t *testing.T) {
 	if err != nil {
 		t.Fatalf("setup: %v", err)
 	}
-	os.WriteFile(filepath.Join(home, "testfile.txt"), []byte("x"), 0o644)
+	_ = os.WriteFile(filepath.Join(home, "testfile.txt"), []byte("x"), 0o644)
 
 	// Override homeDirFunc and lookupUserFunc for test isolation
 	origHome := homeDirFunc

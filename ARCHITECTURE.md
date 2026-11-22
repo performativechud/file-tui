@@ -199,3 +199,9 @@ graph TB
 | `info.go` | Metadata probes (magick identify, ffprobe, pdfinfo) |
 | `path.go` | Path resolution (quotes, escapes, `file://`, `~`, multi-line) |
 | `internal/boot/boot.go` | Pre-bubbletea background pin to prevent OSC 11 startup hang |
+
+## Decision (2026-11-19)
+Used _ = func() pattern for deferred error-ignoring calls; used waited flag pattern for wait() in compressed archive extraction
+
+## Decision (2026-11-19)
+Used anonymous function wrapper for deferred calls with intentional error ignoring; used waited flag pattern for wait() in compressed archive extraction

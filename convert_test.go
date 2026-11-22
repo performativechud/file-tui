@@ -75,7 +75,7 @@ func TestArchiveRepackZipToTarGz(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		w.Write([]byte("hello " + name))
+		_, _ = w.Write([]byte("hello " + name))
 	}
 	if err := zw.Close(); err != nil {
 		t.Fatal(err)
@@ -98,12 +98,12 @@ func TestArchiveRepackZipToTarGz(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	gz, err := gzip.NewReader(f)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer gz.Close()
+	defer func() { _ = gz.Close() }()
 	tr := tar.NewReader(gz)
 	var names []string
 	for {
@@ -133,7 +133,7 @@ func TestSafeJoinBlocksTraversal(t *testing.T) {
 func TestDataCSVToJSONToCSV(t *testing.T) {
 	dir := t.TempDir()
 	csvPath := filepath.Join(dir, "t.csv")
-	os.WriteFile(csvPath, []byte("a,b\n1,2\n3,4\n"), 0o644)
+	_ = os.WriteFile(csvPath, []byte("a,b\n1,2\n3,4\n"), 0o644)
 
 	jsonPath := filepath.Join(dir, "file-tui-t.json")
 	if err := convertData(csvPath, Target{Ext: "json"}, jsonPath); err != nil {
@@ -267,7 +267,7 @@ func TestArchive7zToTarGz(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	gz, err := gzip.NewReader(f)
 	if err != nil {
 		t.Fatal(err)

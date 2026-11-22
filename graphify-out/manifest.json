@@ -1,0 +1,230 @@
+{
+  ".github/workflows/ci.yml": {
+    "mtime": 1794134025.6175947,
+    "seen": 1795085597.721524,
+    "ast_hash": "500e03d6b4e6cd17c9bc613774776953",
+    "semantic_hash": ""
+  },
+  "archive.go": {
+    "mtime": 1795086892.1155515,
+    "seen": 1795086999.8041482,
+    "ast_hash": "72c54b9f7fbf0e70bcb051bcd290e4f1",
+    "semantic_hash": ""
+  },
+  "autocomplete.go": {
+    "mtime": 1794388529.3279276,
+    "seen": 1795085597.7215364,
+    "ast_hash": "bfca790440f85b13c93722e35932f895",
+    "semantic_hash": ""
+  },
+  "autocomplete_test.go": {
+    "mtime": 1795086967.2875583,
+    "seen": 1795086999.8041568,
+    "ast_hash": "6775764c8ad111e28232bfdb14a04c57",
+    "semantic_hash": ""
+  },
+  "convert.go": {
+    "mtime": 1795086964.1146057,
+    "seen": 1795086999.8041592,
+    "ast_hash": "6399c165c948d2439772e759be78eb00",
+    "semantic_hash": ""
+  },
+  "convert_test.go": {
+    "mtime": 1795086987.1542604,
+    "seen": 1795086999.8041615,
+    "ast_hash": "50bdbb41162b1cc6ff46e0875faef9c6",
+    "semantic_hash": ""
+  },
+  "detect.go": {
+    "mtime": 1795086988.2882433,
+    "seen": 1795086999.8041632,
+    "ast_hash": "c59e31890d8fcbe38f3db3d93b3ff978",
+    "semantic_hash": ""
+  },
+  "detect_test.go": {
+    "mtime": 1793876823.368568,
+    "seen": 1795085597.7215462,
+    "ast_hash": "7019028bcf2c810d5ad17bd296bf3e0f",
+    "semantic_hash": ""
+  },
+  "formats.go": {
+    "mtime": 1794291473.547724,
+    "seen": 1795085597.7215476,
+    "ast_hash": "1833012176712aa5cf8927fa35ca6ac9",
+    "semantic_hash": ""
+  },
+  "formats_test.go": {
+    "mtime": 1795086996.991112,
+    "seen": 1795086999.8041694,
+    "ast_hash": "cf0c489589a4b66329385e2c25aa2f96",
+    "semantic_hash": ""
+  },
+  "go.mod": {
+    "mtime": 1794134025.6208665,
+    "seen": 1795085597.7215502,
+    "ast_hash": "879d47931a9e85c179246f4ec747135e",
+    "semantic_hash": ""
+  },
+  "info.go": {
+    "mtime": 1795086997.0721107,
+    "seen": 1795086999.8041732,
+    "ast_hash": "075b1fdc6b024d1e4c678bc666b559ce",
+    "semantic_hash": ""
+  },
+  "internal/boot/boot.go": {
+    "mtime": 1794134025.637309,
+    "seen": 1795085597.7215533,
+    "ast_hash": "8086fa49000fc55461b5d19641e185b5",
+    "semantic_hash": ""
+  },
+  "limits_test.go": {
+    "mtime": 1794116935.479457,
+    "seen": 1795085597.7215545,
+    "ast_hash": "77eba119136fe835e97a8a923b454eaf",
+    "semantic_hash": ""
+  },
+  "main.go": {
+    "mtime": 1794134025.644866,
+    "seen": 1795085597.721556,
+    "ast_hash": "ee7288a7aad736af1d1c2964d4d5edb2",
+    "semantic_hash": ""
+  },
+  "path.go": {
+    "mtime": 1794291473.547724,
+    "seen": 1795085597.7215571,
+    "ast_hash": "9fe1f4054ee28da2ec078d17cb20c9bf",
+    "semantic_hash": ""
+  },
+  "path_test.go": {
+    "mtime": 1795084503.3056288,
+    "seen": 1795085597.7215583,
+    "ast_hash": "c98d0778893cb02e182abf1b4713e60d",
+    "semantic_hash": ""
+  },
+  "probe.go": {
+    "mtime": 1794115867.269469,
+    "seen": 1795085597.7215598,
+    "ast_hash": "2918d759225a2b3e6a80cb98f9012fae",
+    "semantic_hash": ""
+  },
+  "proc_unix.go": {
+    "mtime": 1794132637.517878,
+    "seen": 1795085597.7215612,
+    "ast_hash": "8375476d63a6b7bbdf59d744d41f303f",
+    "semantic_hash": ""
+  },
+  "proc_windows.go": {
+    "mtime": 1794132637.518878,
+    "seen": 1795085597.7215624,
+    "ast_hash": "99c6abccac9bb3b3b6305a87bc498074",
+    "semantic_hash": ""
+  },
+  "security_test.go": {
+    "mtime": 1795086981.6223435,
+    "seen": 1795086999.8041897,
+    "ast_hash": "54cb34b57091763dc91a0b26f5a4b229",
+    "semantic_hash": ""
+  },
+  "ui.go": {
+    "mtime": 1794211727.6735804,
+    "seen": 1795085597.721565,
+    "ast_hash": "f9979bfe5bf635712b796240589256dd",
+    "semantic_hash": ""
+  },
+  "ui_test.go": {
+    "mtime": 1795086998.6620865,
+    "seen": 1795086999.804193,
+    "ast_hash": "54379f48f7a67dd3d40026b72de2cdfe",
+    "semantic_hash": ""
+  },
+  ".claude/skills/gitnexus-cli/SKILL.md": {
+    "mtime": 1795086314.7410378,
+    "seen": 1795086999.804195,
+    "ast_hash": "c40f5ed1d32a4f298484644deb023ba4",
+    "semantic_hash": ""
+  },
+  ".claude/skills/gitnexus-debugging/SKILL.md": {
+    "mtime": 1795086314.7400377,
+    "seen": 1795086999.8041964,
+    "ast_hash": "5a6e25eee809c31a0cc7071018b62aa8",
+    "semantic_hash": ""
+  },
+  ".claude/skills/gitnexus-exploring/SKILL.md": {
+    "mtime": 1795086314.7390378,
+    "seen": 1795086999.8041978,
+    "ast_hash": "d84b30f0d425f42c7278957bfe8c2498",
+    "semantic_hash": ""
+  },
+  ".claude/skills/gitnexus-guide/SKILL.md": {
+    "mtime": 1795086314.7410378,
+    "seen": 1795086999.8041995,
+    "ast_hash": "51eee64e023b05990b57ea22eac4957d",
+    "semantic_hash": ""
+  },
+  ".claude/skills/gitnexus-impact-analysis/SKILL.md": {
+    "mtime": 1795086314.7390378,
+    "seen": 1795086999.8042011,
+    "ast_hash": "6bfe180855650916db5f0493990a3e4f",
+    "semantic_hash": ""
+  },
+  ".claude/skills/gitnexus-refactoring/SKILL.md": {
+    "mtime": 1795086314.7400377,
+    "seen": 1795086999.8042028,
+    "ast_hash": "7bd98a42fc96205ae57283575451a142",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1795085591.4939415,
+    "seen": 1795085597.7215793,
+    "ast_hash": "db8ca5942d1c45197b864422400e0c52",
+    "semantic_hash": ""
+  },
+  "ARCHITECTURE.md": {
+    "mtime": 1795086999.0353224,
+    "seen": 1795086999.8042064,
+    "ast_hash": "9d9a38d55012492d45e864521828e6d5",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1795085591.4939415,
+    "seen": 1795085597.7215815,
+    "ast_hash": "db8ca5942d1c45197b864422400e0c52",
+    "semantic_hash": ""
+  },
+  "IDEA.md": {
+    "mtime": 1794387104.6887934,
+    "seen": 1795085597.7215827,
+    "ast_hash": "f85db513235cfa889de82ea50ed2734b",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1794138657.7886868,
+    "seen": 1795085597.7215838,
+    "ast_hash": "44978f26847e2a1a15b728bace28c62b",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/1.png": {
+    "mtime": 1794137097.2208745,
+    "seen": 1795085597.7215848,
+    "ast_hash": "666c2a4042c38a6a73acb40dcf3ef113",
+    "semantic_hash": ""
+  },
+  "docs/screenshots/3.png": {
+    "mtime": 1794137097.2228203,
+    "seen": 1795085597.7215862,
+    "ast_hash": "042d4f47562a2293c40f5566042d33dd",
+    "semantic_hash": ""
+  },
+  "CHANGELOG.md": {
+    "mtime": 1795086999.035516,
+    "seen": 1795086999.8042078,
+    "ast_hash": "6d74b4ac05b0d0d1858e18d4ffa82a8f",
+    "semantic_hash": ""
+  },
+  "known-issues.md": {
+    "mtime": 1795086999.035034,
+    "seen": 1795086999.804215,
+    "ast_hash": "17dd6d9559a3ba7e0e6586de7223269d",
+    "semantic_hash": ""
+  }
+}

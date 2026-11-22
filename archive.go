@@ -72,7 +72,7 @@ func convertArchive(ctx context.Context, src string, k Kind, t Target, out strin
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(tmp)
+	defer func() { _ = os.RemoveAll(tmp) }()
 
 	emit(Progress{Percent: -1, Label: "reading archive"})
 	if err := extractArchive(ctx, src, k, tmp); err != nil {
@@ -90,7 +90,7 @@ func extractArchive(ctx context.Context, src string, k Kind, dst string) error {
 		if err != nil {
 			return err
 		}
-		defer zr.Close()
+		defer func() { _ = zr.Close() }()
 		for _, zf := range zr.File {
 			if err := ctx.Err(); err != nil {
 				return context.Canceled
@@ -117,9 +117,10 @@ func extractArchive(ctx context.Context, src string, k Kind, dst string) error {
 				return err
 			}
 			if err := writeStream(target, rc, info.Mode().Perm(), budget); err != nil {
-				rc.Close()
+				_ = rc.Close()
 				return fmt.Errorf("extract %s: %w", target, err)
 			}
+			_ = rc.Close()
 		}
 		return nil
 
@@ -175,7 +176,12 @@ func extractArchive(ctx context.Context, src string, k Kind, dst string) error {
 		if err != nil {
 			return err
 		}
-		defer wait()
+		waited := false
+		defer func() {
+			if !waited {
+				_ = wait()
+			}
+		}()
 		name := filepath.Base(srcBase(src))
 		if name == "" || name == "." {
 			name = "decompressed"
@@ -190,7 +196,8 @@ func extractArchive(ctx context.Context, src string, k Kind, dst string) error {
 		if err := writeStream(target, r, 0o644, budget); err != nil {
 			return fmt.Errorf("extract %s: %w", target, err)
 		}
-		return nil
+		waited = true
+		return wait()
 
 	case "7z", "rar":
 		if _, err := exec.LookPath("7z"); err == nil {
@@ -225,21 +232,28 @@ func openTarStream(ctx context.Context, src, id string) (io.Reader, func() error
 	case "tar.gz":
 		gz, err := gzip.NewReader(f)
 		if err != nil {
-			f.Close()
+			_ = f.Close()
 			return nil, nil, err
 		}
-		return gz, func() error { gz.Close(); return f.Close() }, nil
+		return gz, func() error {
+			gzErr := gz.Close()
+			fErr := f.Close()
+			if gzErr != nil {
+				return gzErr
+			}
+			return fErr
+		}, nil
 	case "tar.bz2":
-		f.Close()
+		_ = f.Close()
 		return execStream(ctx, "bzip2", []string{"-dc", src})
 	case "tar.xz":
-		f.Close()
+		_ = f.Close()
 		return execStream(ctx, "xz", []string{"-dc", src})
 	case "tar.zst":
-		f.Close()
+		_ = f.Close()
 		return execStream(ctx, "zstd", []string{"-q", "-dc", src})
 	}
-	f.Close()
+	_ = f.Close()
 	return nil, nil, fmt.Errorf("unsupported tar compression")
 }
 
@@ -251,12 +265,19 @@ func openCompressed(ctx context.Context, src, id string) (io.Reader, func() erro
 	if id == "gz" {
 		gz, err := gzip.NewReader(f)
 		if err != nil {
-			f.Close()
+			_ = f.Close()
 			return nil, nil, err
 		}
-		return gz, func() error { gz.Close(); return f.Close() }, nil
+		return gz, func() error {
+			gzErr := gz.Close()
+			fErr := f.Close()
+			if gzErr != nil {
+				return gzErr
+			}
+			return fErr
+		}, nil
 	}
-	f.Close()
+	_ = f.Close()
 	switch id {
 	case "bz2":
 		return execStream(ctx, "bzip2", []string{"-dc", src})
@@ -294,15 +315,17 @@ func execStream(ctx context.Context, bin string, args []string) (io.Reader, func
 
 // packArchive walks the temp dir twice: once to count entries, once to pack.
 // This avoids holding every file's metadata in memory at once.
-func packArchive(ctx context.Context, root, ext, out string, emit func(Progress)) error {
+func packArchive(ctx context.Context, root, ext, out string, emit func(Progress)) (err error) {
 	total := 0
-	filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+	if err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil || p == root {
 			return err
 		}
 		total++
 		return nil
-	})
+	}); err != nil {
+		return err
+	}
 	if total == 0 {
 		total = 1
 	}
@@ -311,7 +334,11 @@ func packArchive(ctx context.Context, root, ext, out string, emit func(Progress)
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() {
+		if cerr := f.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
 
 	i := 0
 	step := func() {
@@ -417,7 +444,7 @@ func packArchive(ctx context.Context, root, ext, out string, emit func(Progress)
 		if perr := tw.Close(); perr != nil && err == nil {
 			err = perr
 		}
-		stdin.Close()
+		_ = stdin.Close()
 		werr := cmd.Wait()
 		if err != nil {
 			return err
@@ -460,7 +487,7 @@ func addZipFile(zw *zip.Writer, root, path string, d fs.DirEntry) error {
 	if err != nil {
 		return err
 	}
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 	_, err = io.Copy(w, src)
 	return err
 }
@@ -491,7 +518,9 @@ func packTarFile(tw *tar.Writer, root, path string, d fs.DirEntry) error {
 			return err
 		}
 		_, err = io.Copy(tw, src)
-		src.Close()
+		if cerr := src.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
 		if err != nil {
 			return err
 		}

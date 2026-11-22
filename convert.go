@@ -314,8 +314,8 @@ func convertPandocPDF(ctx context.Context, src, out string) error {
 		return err
 	}
 	html := f.Name()
-	f.Close()
-	defer os.Remove(html)
+	_ = f.Close()
+	defer func() { _ = os.Remove(html) }()
 	if err := runCmd(ctx, "pandoc", []string{src, "-s", "-o", html}, nil); err != nil {
 		return err
 	}
@@ -327,7 +327,7 @@ func convertLibreOffice(ctx context.Context, src string, t Target, out string) e
 	if err != nil {
 		return err
 	}
-	defer os.RemoveAll(tmp)
+	defer func() { _ = os.RemoveAll(tmp) }()
 
 	bin := "soffice"
 	if _, err := exec.LookPath(bin); err != nil {
@@ -359,12 +359,12 @@ func copyFile(src, dst string) error {
 	if err != nil {
 		return err
 	}
-	defer in.Close()
+	defer func() { _ = in.Close() }()
 	out, err := os.Create(dst)
 	if err != nil {
 		return err
 	}
-	defer out.Close()
+	defer func() { _ = out.Close() }()
 	if _, err := io.Copy(out, in); err != nil {
 		return err
 	}
@@ -488,7 +488,7 @@ func readCSVTable(src string, comma rune) (table, error) {
 	if err != nil {
 		return table{}, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	r := csv.NewReader(f)
 	r.Comma = comma
 	r.FieldsPerRecord = -1
@@ -578,7 +578,7 @@ func writeCSVTable(out string, t table, comma rune) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	w := csv.NewWriter(f)
 	w.Comma = comma
 	if len(t.header) > 0 {

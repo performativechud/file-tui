@@ -144,7 +144,7 @@ func detectFile(p string) (Kind, error) {
 	if err != nil {
 		return Kind{}, err
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 	head := make([]byte, 4096)
 	n, _ := f.Read(head)
 	return detect(head[:n], p), nil
