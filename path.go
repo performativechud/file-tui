@@ -78,9 +78,11 @@ func normalizePath(s string) string {
 		}
 	}
 	s = unescapeShell(s)
+	expanded := false
 	if s == "~" || strings.HasPrefix(s, "~/") {
 		if home, err := os.UserHomeDir(); err == nil {
 			s = home + s[1:]
+			expanded = true
 		}
 	} else if strings.HasPrefix(s, "~") {
 		// ~user or ~user/path: expand via os/user.Lookup.
@@ -94,6 +96,7 @@ func normalizePath(s string) string {
 		if userPart != "" {
 			if u, err := user.Lookup(userPart); err == nil {
 				s = u.HomeDir + tail
+				expanded = true
 			}
 			// On lookup failure, leave s unchanged so callers see the literal path.
 		}
@@ -101,7 +104,10 @@ func normalizePath(s string) string {
 	if s == "" {
 		return ""
 	}
-	return filepath.Clean(s)
+	if expanded {
+		return filepath.Clean(s)
+	}
+	return s
 }
 
 // unescapeShell drops backslashes that quote punctuation, which is how many
